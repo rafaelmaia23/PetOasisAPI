@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PetOasisAPI.Data;
+using PetOasisAPI.Middleware;
 using PetOasisAPI.Models.Users;
+using PetOasisAPI.Routes;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,9 @@ builder.Services.AddDbContext<AppDbContext>(options => options
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+//builder.Services.AddIdentityApiEndpoints<AppUser>()
+//    .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -49,10 +54,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
+//app.MapIdentityApi<AppUser>();
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+//Custtom Middleware
+app.UseMiddleware<ValidationMiddleware>();
+
 //Map routes
+app.MapRoutes();
 
 app.Run();
