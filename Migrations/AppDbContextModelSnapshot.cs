@@ -277,8 +277,9 @@ namespace PetOasisAPI.Migrations
                 {
                     b.HasBaseType("PetOasisAPI.Models.Users.AppUser");
 
-                    b.Property<int>("EmployeeNumber")
-                        .HasColumnType("integer");
+                    b.Property<string>("EmployeeNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Position")
                         .IsRequired()

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using PetOasisAPI.Data.Repository.IRepository;
 using PetOasisAPI.Services.IServices;
 
@@ -14,7 +15,7 @@ namespace PetOasisAPI.Services
         protected readonly IRepository<T> _repository;
         protected readonly IMapper _mapper;
 
-        protected Service(IRepository<T> repository, IActionResultTypeMapper mapper)
+        protected Service(IRepository<T> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -37,7 +38,7 @@ namespace PetOasisAPI.Services
             await _repository.CreateAsync(entity);
             return _mapper.Map<TReadDto>(entity);
         }
-        public async Task<TReadDto> UpdateAsync(int id, TUpdateDto dto)
+        public async Task<TReadDto?> UpdateAsync(int id, TUpdateDto dto)
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null)

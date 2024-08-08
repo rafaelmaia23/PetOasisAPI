@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PetOasisAPI.Models.Auth.Dto;
+namespace PetOasisAPI.Models.Auth;
 
-public class LoginRequestDto
+public class LoginRequest
 {
     [Required]
     [DataType(DataType.EmailAddress)]

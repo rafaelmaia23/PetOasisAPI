@@ -5,12 +5,8 @@ using PetOasisAPI.Models.Users;
 
 namespace PetOasisAPI.Data;
 
-public class AppDbContext : IdentityDbContext<AppUser>
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {        
-    }
-
     public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Tutor> Tutors { get; set; }

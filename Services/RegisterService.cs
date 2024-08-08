@@ -1,11 +1,74 @@
-﻿using PetOasisAPI.Models.Responses;
+﻿using PetOasisAPI.Data.Repository.IRepository;
+using PetOasisAPI.Models.Auth;
+using PetOasisAPI.Models.Responses;
+using PetOasisAPI.Models.Users;
+using PetOasisAPI.Services.IServices;
 
 namespace PetOasisAPI.Services;
 
-public class RegisterService : BaseService<>, IResgisterService
+public class RegisterService : IRegisterService
 {
-    public RegisterResponse RegisterUser()
+    private readonly IUserRepository<AppUser> _userRepository;
+
+    public RegisterService(IUserRepository<AppUser> userRepository)
     {
-        
+        _userRepository = userRepository;
+    }
+
+    private async Task<RegisterResponse> RegisterAsync(AppUser newUser, string password, string role)
+    {
+        if (await _userRepository.GetByEmailAsync(newUser.Email!) is not null)
+        {
+            return new RegisterResponse()
+            {
+                Success = false,
+                StatusCode = StatusCodes.Status400BadRequest,
+                Messages = new List<string> {"Email already registered"},
+                Data = null,     
+            };
+        }
+
+        var result = await _userRepository.RegisterAsync(newUser, password, role);
+
+        return new RegisterResponse()
+        {
+            Success = result.Succeeded,
+            StatusCode = result.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError,
+            Messages = result.Succeeded ? new List<string> {"User created"} : result.Errors.Select(e => e.Description).ToList(),
+            Data = result.Succeeded ? newUser : null
+        };
+    }
+
+    public async Task<RegisterResponse> RegisterEmployeenAsync(RegisterEmployeeRequest request)
+    {
+        string userRole = request.IsAdmin ? "admin" : "employee";
+
+        var newUser = new Employee()
+        {
+            Name = request.Name,
+            Surname = request.Surname,
+            Email = request.Email,
+            UserName = request.Email,
+            PasswordHash = request.Password,
+            Position = request.Position,
+        };
+
+        return await RegisterAsync(newUser, request.Password, userRole);
+    }
+
+    public async Task<RegisterResponse> RegisterTutorAsync(RegisterTutorRequest request)
+    {
+        string userRole = "tutor";
+
+        var newUser = new Tutor()
+        {
+            Name = request.Name,
+            Surname = request.Surname,
+            Email = request.Email,
+            UserName = request.Email,
+            PasswordHash = request.Password
+        };
+
+        return await RegisterAsync(newUser, request.Password, userRole);
     }
 }

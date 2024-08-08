@@ -6,6 +6,6 @@ public class RegisterResponse : IBaseResponse<AppUser>
 {
     public bool Success { get; set; }
     public int StatusCode { get; set; }
-    public string? Message { get; set; }
+    public List<string>? Messages { get; set; }
     public AppUser? Data { get; set; }
 }

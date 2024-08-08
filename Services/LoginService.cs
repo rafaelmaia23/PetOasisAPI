@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PetOasisAPI.Data.Repository;
-using PetOasisAPI.Models.Auth.Dto;
+using PetOasisAPI.Models.Auth;
 using PetOasisAPI.Models.Responses;
 using PetOasisAPI.Models.Users;
 using PetOasisAPI.Services.IServices;
@@ -15,7 +15,7 @@ public class LoginService : ILoginService
     {
         _userRepository = userRepository;
     }
-    public async Task<LoginResponse> LoginAsync(LoginRequestDto dto)
+    public async Task<LoginResponse> LoginAsync(LoginRequest dto)
     {
         var appUser = await _userRepository.GetByEmailAsync(dto.Email);
         if(appUser == null)
@@ -24,7 +24,7 @@ public class LoginService : ILoginService
             {
                 Success = false,
                 StatusCode = StatusCodes.Status500InternalServerError,
-                Message = "User Email not found!"
+                Messages = new List<string> {"User Email not found!"}
             };
         }
 
@@ -36,7 +36,7 @@ public class LoginService : ILoginService
             {
                 Success = false,
                 StatusCode = StatusCodes.Status400BadRequest,
-                Message = "Login Failed! Email or password invalid."
+                Messages = new List<string> {"Login Failed! Email or password invalid."}
             };
         }
 
@@ -44,7 +44,7 @@ public class LoginService : ILoginService
         {
             Success = true,
             StatusCode = StatusCodes.Status200OK,
-            Message = "Login Succeded!",
+            Messages = new List<string> {"Login Succeded!"},
             Data = appUser,
             Token = "Token here"
         };

@@ -12,8 +12,8 @@ using PetOasisAPI.Data;
 namespace PetOasisAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240705153834_initial")]
-    partial class initial
+    [Migration("20240808223657_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -280,8 +280,9 @@ namespace PetOasisAPI.Migrations
                 {
                     b.HasBaseType("PetOasisAPI.Models.Users.AppUser");
 
-                    b.Property<int>("EmployeeNumber")
-                        .HasColumnType("integer");
+                    b.Property<string>("EmployeeNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Position")
                         .IsRequired()

@@ -23,3 +23,4 @@ public class Pet
     [ForeignKey(nameof(TutorId))]
     public Tutor Tutor { get; set; } = null!;
 }
+ 

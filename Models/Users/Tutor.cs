@@ -1,9 +1,10 @@
 ﻿
 using PetOasisAPI.Models.Pets;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetOasisAPI.Models.Users;
 
 public class Tutor : AppUser
 {
-    public IEnumerable<Pet>? Pets { get; set; }
+    public IList<Pet> Pets { get; set; } = [];
 }
