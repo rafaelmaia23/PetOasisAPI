@@ -1,5 +1,5 @@
-﻿using PetOasisAPI.Models.Auth;
-using PetOasisAPI.Services;
+﻿using PetOasisAPI.Attributes;
+using PetOasisAPI.Models.Auth;
 using PetOasisAPI.Services.IServices;
 
 namespace PetOasisAPI.Routes.Auth;
@@ -7,8 +7,8 @@ namespace PetOasisAPI.Routes.Auth;
 public static class RegisterRoutes
 {
     public static void MapRegisterRoutes(this IEndpointRouteBuilder app)
-    {
-        app.MapPost("/registerTutor", async (RegisterTutorRequest request, IRegisterService service) =>
+    {        
+        app.MapPost("/registerTutor", [ModelType(typeof(RegisterTutorRequest))] async (RegisterTutorRequest request, IRegisterService service) =>
         {
             var result = await service.RegisterTutorAsync(request);
 
@@ -21,7 +21,7 @@ public static class RegisterRoutes
             return Results.Ok(result.Messages);
         });
 
-        app.MapPost("/registerEmployee", async (RegisterEmployeeRequest request, IRegisterService service) =>
+        app.MapPost("/registerEmployee", [ModelType(typeof(RegisterEmployeeRequest))] async (RegisterEmployeeRequest request, IRegisterService service) =>
         {
             var result = await service.RegisterEmployeenAsync(request);
 
