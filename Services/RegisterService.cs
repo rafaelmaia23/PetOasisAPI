@@ -9,10 +9,12 @@ namespace PetOasisAPI.Services;
 public class RegisterService : IRegisterService
 {
     private readonly IUserRepository<AppUser> _userRepository;
+    private readonly IGenerateEmployeeNumberService _generateEmployeeNumberService;
 
-    public RegisterService(IUserRepository<AppUser> userRepository)
+    public RegisterService(IUserRepository<AppUser> userRepository, IGenerateEmployeeNumberService generateEmployeeNumberService)
     {
         _userRepository = userRepository;
+        _generateEmployeeNumberService = generateEmployeeNumberService;
     }
 
     private async Task<RegisterResponse> RegisterAsync(AppUser newUser, string password, string role)
@@ -33,7 +35,7 @@ public class RegisterService : IRegisterService
         return new RegisterResponse()
         {
             Success = result.Succeeded,
-            StatusCode = result.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError,
+            StatusCode = result.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest,
             Messages = result.Succeeded ? new List<string> {"User created"} : result.Errors.Select(e => e.Description).ToList(),
             Data = result.Succeeded ? newUser : null
         };
@@ -51,6 +53,7 @@ public class RegisterService : IRegisterService
             UserName = request.Email,
             PasswordHash = request.Password,
             Position = request.Position,
+            EmployeeNumber = await _generateEmployeeNumberService.Generate(),
         };
 
         return await RegisterAsync(newUser, request.Password, userRole);
