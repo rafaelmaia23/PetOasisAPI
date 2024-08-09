@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PetOasisAPI.Config;
 using PetOasisAPI.Data;
 using PetOasisAPI.Data.Repository;
 using PetOasisAPI.Data.Repository.IRepository;
@@ -34,14 +33,19 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options => options
-                .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
-
-//builder.Services.AddIdentityApiEndpoints<AppUser>()
-//    .AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => 
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true; 
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -64,11 +68,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IUserRepository<AppUser>, UserRepository>();
+
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IGenerateEmployeeNumberService, GenerateEmployeeNumberService>();
 
 var app = builder.Build();
-
-await app.InitializeEmployeeNumberAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -77,18 +81,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.MapIdentityApi<AppUser>();
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-//Custom Middleware
 app.UseMiddleware<ValidationMiddleware>();
 
-//Map routes
 app.MapRoutes();
 
 app.Run();
