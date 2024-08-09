@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using PetOasisAPI.Attributes;
 
 namespace PetOasisAPI.Middleware;
 
@@ -23,11 +25,16 @@ public class ValidationMiddleware
             context.Request.Body.Position = 0;
 
             var endpoint = context.GetEndpoint();
-            var modelType = endpoint?.RequestDelegate?.Target?.GetType().GetGenericArguments().FirstOrDefault();
+            var modelTypeAttribute = endpoint?.Metadata.GetMetadata<ModelTypeAttribute>();
+            var modelType = modelTypeAttribute?.ModelType;
 
             if(modelType != null)
             {
-                var model = JsonSerializer.Deserialize(body, modelType);
+                var model = JsonSerializer.Deserialize(body, modelType, new JsonSerializerOptions 
+                {
+                    PropertyNameCaseInsensitive = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                });
                 if (model != null)
                 {
                     var validationContext = new ValidationContext(model);
