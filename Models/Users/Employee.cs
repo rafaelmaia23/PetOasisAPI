@@ -8,6 +8,12 @@ public class Employee : AppUser
 {
     private static int _currentEmployeeNumber = 0;
 
+    public static int CurrentEmployeeNumber 
+    { 
+        get { return _currentEmployeeNumber; }
+        private set { _currentEmployeeNumber = value; }
+    }
+
     [Required]
     public string EmployeeNumber { get; set; }
     [Required]
