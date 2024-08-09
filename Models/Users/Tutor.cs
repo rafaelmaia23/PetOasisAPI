@@ -1,6 +1,5 @@
 ﻿
 using PetOasisAPI.Models.Pets;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetOasisAPI.Models.Users;
 
