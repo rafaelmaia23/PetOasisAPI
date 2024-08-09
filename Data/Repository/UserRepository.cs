@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PetOasisAPI.Data.Repository.IRepository;
 using PetOasisAPI.Models.Users;
 
@@ -22,12 +23,12 @@ public class UserRepository(AppDbContext appDbContext, UserManager<AppUser> user
 
         if(!createUserResult.Succeeded) return createUserResult;
 
-        IdentityResult addRoleResult = await AsignRole(appUser, userRole);
+        IdentityResult addRoleResult = await AsignRoleAsync(appUser, userRole);
 
         return addRoleResult;
     }
 
-    public async Task<IdentityResult> AsignRole(AppUser appUser, string role)
+    public async Task<IdentityResult> AsignRoleAsync(AppUser appUser, string role)
     {
         IdentityRole? roleFromDb = await _roleManager.FindByNameAsync(role);
 
@@ -40,5 +41,10 @@ public class UserRepository(AppDbContext appDbContext, UserManager<AppUser> user
     public async Task<SignInResult> SignInAsync(AppUser appUser, string password)
     {
         return await _signInManager.PasswordSignInAsync(appUser, password, false, false);
+    }
+
+    public async Task<int> GetNumberOfEmployeeUsersAsync()
+    {        
+        return await _appDbContext.AppUsers.Where(x => x is Employee).CountAsync();
     }
 }
