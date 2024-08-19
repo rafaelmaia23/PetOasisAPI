@@ -1,5 +1,7 @@
-﻿using PetOasisAPI.Data.Repository.IRepository;
+﻿using AutoMapper;
+using PetOasisAPI.Data.Repository.IRepository;
 using PetOasisAPI.Models.Auth;
+using PetOasisAPI.Models.Dtos.Users;
 using PetOasisAPI.Models.Responses;
 using PetOasisAPI.Models.Users;
 using PetOasisAPI.Services.IServices;
@@ -10,11 +12,13 @@ public class RegisterService : IRegisterService
 {
     private readonly IUserRepository<AppUser> _userRepository;
     private readonly IGenerateEmployeeNumberService _generateEmployeeNumberService;
+    private readonly IMapper _mapper;
 
-    public RegisterService(IUserRepository<AppUser> userRepository, IGenerateEmployeeNumberService generateEmployeeNumberService)
+    public RegisterService(IUserRepository<AppUser> userRepository, IGenerateEmployeeNumberService generateEmployeeNumberService, IMapper mapper)
     {
         _userRepository = userRepository;
         _generateEmployeeNumberService = generateEmployeeNumberService;
+        _mapper = mapper;
     }
 
     private async Task<RegisterResponse> RegisterAsync(AppUser newUser, string password, string role)
@@ -37,7 +41,7 @@ public class RegisterService : IRegisterService
             Success = result.Succeeded,
             StatusCode = result.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest,
             Messages = result.Succeeded ? new List<string> {"User created"} : result.Errors.Select(e => e.Description).ToList(),
-            Data = result.Succeeded ? newUser : null
+            Data = result.Succeeded ? _mapper.Map<AppUserDto>(newUser) : null
         };
     }
 
