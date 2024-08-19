@@ -67,6 +67,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<IUserRepository<AppUser>, UserRepository>();
 
 builder.Services.AddScoped<IRegisterService, RegisterService>();
