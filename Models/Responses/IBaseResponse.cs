@@ -1,6 +1,6 @@
 ﻿namespace PetOasisAPI.Models.Responses;
 
-public interface IBaseResponse<T>
+public interface IBaseServiceResponse<T>
 {
     bool Success { get; set; }
     int StatusCode { get; set; }

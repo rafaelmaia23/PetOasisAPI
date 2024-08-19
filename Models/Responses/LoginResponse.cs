@@ -2,7 +2,7 @@
 
 namespace PetOasisAPI.Models.Responses
 {
-    public class LoginResponse : IBaseResponse<AppUser>
+    public class LoginResponse : IBaseServiceResponse<AppUser>
     {        
         public bool Success { get; set; }
         public int StatusCode { get; set; }
