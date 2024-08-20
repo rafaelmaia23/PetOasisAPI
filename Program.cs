@@ -20,17 +20,48 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+// builder.Services.AddSwaggerGen(options =>
+// {
+//     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+//     {
+//         In = ParameterLocation.Header,
+//         Name = "Authorization",
+//         Type = SecuritySchemeType.ApiKey
+//     });
+
+//     options.OperationFilter<SecurityRequirementsOperationFilter>();
+// });
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Description = "Insira o token JWT no formato: Bearer {token}"
     });
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "oauth2"
+                }
+            },
+            Array.Empty<string>()
+        }
+    };
+
+    options.AddSecurityRequirement(securityRequirement);
 });
+
 
 builder.Services.AddDbContext<AppDbContext>(options => options
     .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -72,7 +103,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IUserRepository<AppUser>, UserRepository>();
 
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IGenerateEmployeeNumberService, GenerateEmployeeNumberService>();
+builder.Services.AddScoped<IGenerateLoginTokenService, GenerateLoginTokenService>();
 
 var app = builder.Build();
 
