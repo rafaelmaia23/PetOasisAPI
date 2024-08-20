@@ -43,8 +43,18 @@ public class UserRepository(AppDbContext appDbContext, UserManager<AppUser> user
         return await _signInManager.PasswordSignInAsync(appUser, password, false, false);
     }
 
+    public async Task<bool> CheckPasswordAsync(AppUser appUser, string password)
+    {
+        return await _userManager.CheckPasswordAsync(appUser, password);
+    }
+
     public async Task<int> GetNumberOfEmployeeUsersAsync()
     {        
         return await _appDbContext.AppUsers.Where(x => x is Employee).CountAsync();
+    }
+
+    public async Task<IList<string>> GetRolesAsync(AppUser appUser)
+    {
+        return await _userManager.GetRolesAsync(appUser);
     }
 }

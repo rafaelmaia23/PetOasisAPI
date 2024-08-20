@@ -10,6 +10,7 @@ public interface IUserRepository<T> : IRepository<T> where T : class
     //mudar retorno e parametros
     Task<IdentityResult> RegisterAsync(AppUser appUser, string password, string userRole = "tutor");
     Task<IdentityResult> AsignRoleAsync(AppUser appUser, string role);
+    Task<bool> CheckPasswordAsync(AppUser appUser, string password);
     Task<int> GetNumberOfEmployeeUsersAsync();
-
+    Task<IList<string>> GetRolesAsync(AppUser appUser);
 }
