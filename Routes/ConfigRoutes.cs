@@ -7,6 +7,7 @@ public static class ConfigRoutes
     public static void MapRoutes(this IEndpointRouteBuilder app)
     {
         app.MapRegisterRoutes();
+        app.MapLoginRoutes();
     }
     
 }
